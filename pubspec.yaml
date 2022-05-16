@@ -1,0 +1,7 @@
+name: networking
+description: A general purpose HTTP Client for Dart, that is typed and error free.
+version: 0.0.1
+homepage: https://github.com/dart-pacotes/networking.dart
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
