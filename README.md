@@ -31,6 +31,8 @@ print(getEndpointResult);
 
 So far, the package offers an HTTP client that works on top of dart `http` package, providing support for `GET`, `POST`, `PUT`, `DELETE` and `PATCH` methods. There is typing for request errors and responses for most of the general used content-types.
 
+Out-of-the-box it provides a client for consuming **GitHub Raw API** and **Imgur REST API**.
+
 ## Missing features
 
 These are some of the features that live in the package backlog:
