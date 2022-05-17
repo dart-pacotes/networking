@@ -3,6 +3,4 @@
 /// More dartdocs go here.
 library networking;
 
-export 'src/networking_base.dart';
-
-// TODO: Export any libraries intended for clients of this package.
+export 'src/networking.dart';
