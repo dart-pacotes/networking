@@ -1,39 +1,49 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# networking
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
+A general purpose HTTP Client for Dart, that is typed and error free.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
--->
+## How to use
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+Using the networking client for consuming GitHub Raw API, it is as simple as:
+
+```dart
+final repository = NetworkingGitHubRepository(
+    user: 'dart-pacotes',
+    repoId: 'networking',
+    branch: 'master',
+);
+
+// Create networking client that interacts with GitHub Raw API
+final networkingClient = RawGitHubNetworkingClient(
+repository: repository,
+);
+
+final endpoint = 'README.md';
+
+// Get README.md content
+final getEndpointResult = await networkingClient.get(endpoint: endpoint);
+
+// Tadaaaam!
+print(getEndpointResult);
+```
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+So far, the package offers an HTTP client that works on top of dart `http` package, providing support for `GET`, `POST`, `PUT`, `DELETE` and `PATCH` methods. There is typing for request errors and responses for most of the general used content-types.
 
-## Getting started
+## Missing features
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+These are some of the features that live in the package backlog:
 
-## Usage
+- **Middleware** for HTTP requests and responses
+- **WebSocket** integration
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
+## Side Effects
 
-```dart
-const like = 'sample';
-```
+Powered by Dart null sound + [`dartz`](https://pub.dev/packages/dartz) monads, this package is free of null issues and side effects. This is to prevent the throw of any exception that may not be known and caught by developers, and to make sure that information is consistent by contract.
 
-## Additional information
+---
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+### Bugs and Contributions
+
+Found any bug (including typos) in the package? Do you have any suggestion or feature to include for future releases? Please create an issue via GitHub in order to track each contribution. Also, pull requests are very welcome!
