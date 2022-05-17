@@ -31,10 +31,10 @@ class NetworkingClient {
     this.timeoutDuration = const Duration(minutes: 5),
   });
 
-  Future<Either<Response, RequestError>> get({
+  Future<Either<RequestError, Response>> get({
     required final String endpoint,
     final Map<String, String>? headers,
-    final Map<String, dynamic>? queryParameters,
+    final Map<String, String>? queryParameters,
   }) {
     return send(
       request: Request(
@@ -49,12 +49,12 @@ class NetworkingClient {
     );
   }
 
-  Future<Either<Response, RequestError>> post({
+  Future<Either<RequestError, Response>> post({
     required final String endpoint,
     final ContentType contentType = ContentType.json,
     final String? data,
     final Map<String, String>? headers,
-    final Map<String, dynamic>? queryParameters,
+    final Map<String, String>? queryParameters,
   }) {
     return send(
       request: Request(
@@ -71,12 +71,12 @@ class NetworkingClient {
     );
   }
 
-  Future<Either<Response, RequestError>> put({
+  Future<Either<RequestError, Response>> put({
     required final String endpoint,
     final ContentType contentType = ContentType.json,
     final String? data,
     final Map<String, String>? headers,
-    final Map<String, dynamic>? queryParameters,
+    final Map<String, String>? queryParameters,
   }) {
     return send(
       request: Request(
@@ -93,12 +93,12 @@ class NetworkingClient {
     );
   }
 
-  Future<Either<Response, RequestError>> patch({
+  Future<Either<RequestError, Response>> patch({
     required final String endpoint,
     final ContentType contentType = ContentType.json,
     final String? data,
     final Map<String, String>? headers,
-    final Map<String, dynamic>? queryParameters,
+    final Map<String, String>? queryParameters,
   }) {
     return send(
       request: Request(
@@ -115,10 +115,10 @@ class NetworkingClient {
     );
   }
 
-  Future<Either<Response, RequestError>> delete({
+  Future<Either<RequestError, Response>> delete({
     required final String endpoint,
     final Map<String, String>? headers,
-    final Map<String, dynamic>? queryParameters,
+    final Map<String, String>? queryParameters,
   }) {
     return send(
       request: Request(
@@ -133,7 +133,7 @@ class NetworkingClient {
     );
   }
 
-  Future<Either<Response, RequestError>> send({
+  Future<Either<RequestError, Response>> send({
     required final Request request,
   }) async {
     try {
@@ -163,7 +163,7 @@ class NetworkingClient {
       if ((statusCode - 200) < 200) {
         switch (contentType) {
           case ContentType.jpeg:
-            return Left(
+            return Right(
               JpegImageResponse(
                 body: body,
                 statusCode: statusCode,
@@ -171,7 +171,7 @@ class NetworkingClient {
               ),
             );
           case ContentType.json:
-            return Left(
+            return Right(
               JsonResponse(
                 body: body,
                 statusCode: statusCode,
@@ -179,7 +179,7 @@ class NetworkingClient {
               ),
             );
           case ContentType.png:
-            return Left(
+            return Right(
               PngImageResponse(
                 body: body,
                 statusCode: statusCode,
@@ -187,7 +187,7 @@ class NetworkingClient {
               ),
             );
           case ContentType.plainText:
-            return Left(
+            return Right(
               PlainTextResponse(
                 body: body,
                 statusCode: statusCode,
@@ -195,7 +195,7 @@ class NetworkingClient {
               ),
             );
           default:
-            return Left(
+            return Right(
               BinaryResponse(
                 body: body,
                 statusCode: statusCode,
@@ -204,7 +204,7 @@ class NetworkingClient {
             );
         }
       } else {
-        return Left(
+        return Right(
           ErrorResponse(
             contentType: contentType,
             body: body,
@@ -214,31 +214,31 @@ class NetworkingClient {
         );
       }
     } on TimeoutException catch (error, stackTrace) {
-      return Right(
+      return Left(
         TimeoutError(cause: error.message ?? 'timeout', stackTrace: stackTrace),
       );
     } on SocketException catch (error, stackTrace) {
-      return Right(
+      return Left(
         NoInternetConnectionError(cause: error.message, stackTrace: stackTrace),
       );
     } on Exception catch (error, stackTrace) {
-      return Right(
+      return Left(
         UnknownError(cause: error.toString(), stackTrace: stackTrace),
       );
     }
   }
+}
 
-  @visibleForTesting
-  Uri resolveUri({
-    required final Uri baseUrl,
-    required final String endpoint,
-    final Map<String, dynamic>? queryParameters,
-  }) {
-    return baseUrl.resolveUri(
-      Uri(
-        path: '${baseUrl.path}/$endpoint',
-        queryParameters: queryParameters ?? {},
-      ),
-    );
-  }
+@visibleForTesting
+Uri resolveUri({
+  required final Uri baseUrl,
+  required final String endpoint,
+  final Map<String, String>? queryParameters,
+}) {
+  return baseUrl.resolveUri(
+    Uri(
+      path: '${baseUrl.path}${endpoint.isNotEmpty ? '/$endpoint' : ''}',
+      queryParameters: queryParameters,
+    ),
+  );
 }
