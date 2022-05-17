@@ -137,12 +137,12 @@ class NetworkingClient {
     required final Request request,
   }) async {
     try {
-      final httpRequest = http.Request(request.verb.value(), request.uri);
+      final httpRequest = http.Request(request.verb.value, request.uri);
 
       httpRequest.headers
         ..addAll(request.headers)
         ..addAll(
-          {'Content-Type': request.contentType.value()},
+          {'Content-Type': request.contentType.value},
         );
 
       httpRequest.body = request.data;
@@ -153,7 +153,7 @@ class NetworkingClient {
       final statusCode = httpResponse.statusCode;
 
       final contentType = ContentTypeExtension.of(
-        httpResponse.headers['content-type'],
+        httpResponse.headers['content-type'] ?? '',
       );
 
       final body = await httpResponse.stream.toBytes();

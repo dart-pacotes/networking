@@ -7,7 +7,7 @@ enum ContentType {
 }
 
 extension ContentTypeExtension on ContentType {
-  String value() {
+  String get value {
     switch (this) {
       case ContentType.binary:
         return 'application/octet-stream';
@@ -23,7 +23,7 @@ extension ContentTypeExtension on ContentType {
     }
   }
 
-  static ContentType of(final String? value) {
+  static ContentType of(final String value) {
     switch (value) {
       case 'image/jpeg':
         return ContentType.jpeg;
@@ -32,7 +32,7 @@ extension ContentTypeExtension on ContentType {
       case 'image/png':
         return ContentType.png;
       default:
-        if ((value ?? '').contains('text/plain')) {
+        if (value.contains('text/plain')) {
           return ContentType.plainText;
         } else {
           return ContentType.binary;

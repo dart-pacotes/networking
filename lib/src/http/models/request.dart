@@ -1,5 +1,8 @@
 import 'content_type.dart';
 
+///
+/// Mimics the schema of an HTTP request
+///
 class Request {
   final ContentType contentType;
 
@@ -34,6 +37,9 @@ class Request {
   }
 }
 
+///
+/// Defines every supported HTTP method
+///
 enum HttpVerb {
   get,
   post,
@@ -42,8 +48,15 @@ enum HttpVerb {
   delete,
 }
 
+///
+/// Applies an extension on [HttpVerb] enum, in order to provide a
+/// way to get the HTTP verb as string.
+///
+/// TODO: In Dart 3.0, there is the possibility to declare methods in enums,
+/// so this function should be migrated.
+///
 extension HttpVerbExtension on HttpVerb {
-  String value() => toString().split('.').last;
+  String get value => toString().split('.').last;
 }
 
 abstract class RequestError {
