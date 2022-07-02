@@ -21,8 +21,8 @@ class Request {
     final ContentType? contentType,
     final String? data,
   })  : headers = headers ?? const {},
-        contentType = ContentType.binary,
-        data = '';
+        contentType = contentType ?? ContentType.binary,
+        data = data ?? '';
 
   Request copyWith({
     Map<String, String>? headers,

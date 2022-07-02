@@ -1,6 +1,6 @@
 name: networking
 description: A general purpose HTTP Client for Dart, that is typed and error free.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/dart-pacotes/networking.dart
 
 environment:
