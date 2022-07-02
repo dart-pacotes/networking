@@ -1,3 +1,9 @@
+## 0.0.3
+
+Fix #2
+
+- Fixed `Request` class properties not being correctly assigned
+
 ## 0.0.2
 
 Actual first release of networking package.
