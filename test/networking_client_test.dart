@@ -17,6 +17,8 @@ final fakeBaseUri = Uri.base;
 
 final fakeEndpointUri = Uri.base;
 
+final fakeBaseUriWithNoResource = Uri.parse('https://google.com/');
+
 ByteStream get fakeByteStream => ByteStream.fromBytes([]);
 
 final fakeStreamedResponseWithJpegContentType = StreamedResponse(
@@ -415,7 +417,7 @@ void main() {
               );
 
               final expectedEndpointUri = Uri.parse(
-                '${fakeBaseUri.toString()}/$endpoint',
+                '${fakeBaseUri.toString()}$endpoint',
               );
 
               expect(finalEndpointUri, expectedEndpointUri);
@@ -440,7 +442,97 @@ void main() {
               );
 
               final expectedEndpointUri = Uri.parse(
-                '${fakeBaseUri.toString()}/$endpoint?x=2',
+                '${fakeBaseUri.toString()}$endpoint?x=2',
+              );
+
+              expect(finalEndpointUri, expectedEndpointUri);
+            },
+          );
+
+          test(
+            'on endpoint string provided, returns the same base url + /endpoint, even if base url has no resource specified',
+            () {
+              final baseUrl = fakeBaseUriWithNoResource;
+
+              final endpoint = '/abc';
+
+              final finalEndpointUri = resolveUri(
+                baseUrl: baseUrl,
+                endpoint: endpoint,
+              );
+
+              final expectedEndpointUri = Uri.parse(
+                '${baseUrl.toString()}${endpoint.replaceAll('/', '')}',
+              );
+
+              expect(finalEndpointUri, expectedEndpointUri);
+            },
+          );
+
+          test(
+            'on endpoint string provided but with query parameters, returns the same base url + /endpoint, even if base url has no resource specified',
+            () {
+              final baseUrl = fakeBaseUriWithNoResource;
+
+              final endpoint = '/abc';
+
+              final queryParameters = {
+                'x': '2',
+              };
+
+              final finalEndpointUri = resolveUri(
+                baseUrl: baseUrl,
+                endpoint: endpoint,
+                queryParameters: queryParameters,
+              );
+
+              final expectedEndpointUri = Uri.parse(
+                '${baseUrl.toString()}${endpoint.replaceAll('/', '')}?x=2',
+              );
+
+              expect(finalEndpointUri, expectedEndpointUri);
+            },
+          );
+
+          test(
+            'on endpoint string provided with multiple resources, returns the same base url + /endpoint',
+            () {
+              final baseUrl = fakeBaseUri;
+
+              final endpoint = 'abc/def/123/';
+
+              final finalEndpointUri = resolveUri(
+                baseUrl: baseUrl,
+                endpoint: endpoint,
+              );
+
+              final expectedEndpointUri = Uri.parse(
+                '${fakeBaseUri.toString()}$endpoint',
+              );
+
+              expect(finalEndpointUri, expectedEndpointUri);
+            },
+          );
+
+          test(
+            'on endpoint string provided with multiple resources but with query parameters, returns the same base url + /endpoint + query parameters',
+            () {
+              final baseUrl = fakeBaseUri;
+
+              final endpoint = 'abc/def/123';
+
+              final queryParameters = {
+                'x': '2',
+              };
+
+              final finalEndpointUri = resolveUri(
+                baseUrl: baseUrl,
+                endpoint: endpoint,
+                queryParameters: queryParameters,
+              );
+
+              final expectedEndpointUri = Uri.parse(
+                '${fakeBaseUri.toString()}$endpoint?x=2',
               );
 
               expect(finalEndpointUri, expectedEndpointUri);

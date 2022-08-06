@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:networking/networking.dart';
 
+final _moreThanTwoSlashesRegex = RegExp('\/{2,}');
+
 /// Base networking client for communicating with external HTTP Web APIs.
 /// Internally uses Dart [http] client library and requires one instance of it
 /// to start the client. This is done to allow mocking of networking requests.
@@ -235,9 +237,13 @@ Uri resolveUri({
   required final String endpoint,
   final Map<String, String>? queryParameters,
 }) {
+  final escapedPath =
+      '${baseUrl.path}${endpoint.isNotEmpty ? '/$endpoint' : ''}'
+          .replaceAll(_moreThanTwoSlashesRegex, '/');
+
   return baseUrl.resolveUri(
     Uri(
-      path: '${baseUrl.path}${endpoint.isNotEmpty ? '/$endpoint' : ''}',
+      path: escapedPath,
       queryParameters: queryParameters,
     ),
   );
