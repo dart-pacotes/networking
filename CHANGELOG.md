@@ -1,3 +1,8 @@
+## 0.0.4
+
+- Include out-of-the-box JSON encoding for `Map` objects (#6)
+- Fix bug where `resolveUri` method would output no host if base url or endpoint had multiple slashes (#7)
+
 ## 0.0.3
 
 Fix #2
