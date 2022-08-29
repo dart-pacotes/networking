@@ -105,6 +105,19 @@ void main() {
           );
 
           test(
+            'returns ContentType.json on "application/json;charset=UTF-8"',
+            () {
+              final value = 'application/json;charset=UTF-8';
+
+              final contentType = ContentTypeExtension.of(value);
+
+              final expectedContentType = ContentType.json;
+
+              expect(contentType, expectedContentType);
+            },
+          );
+
+          test(
             'returns ContentType.plainText on "text/plain"',
             () {
               final value = 'text/plain';
