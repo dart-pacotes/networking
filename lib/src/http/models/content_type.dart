@@ -4,6 +4,7 @@ enum ContentType {
   json,
   png,
   plainText,
+  formData,
 }
 
 extension ContentTypeExtension on ContentType {
@@ -11,6 +12,8 @@ extension ContentTypeExtension on ContentType {
     switch (this) {
       case ContentType.binary:
         return 'application/octet-stream';
+      case ContentType.formData:
+        return 'multipart/form-data';
       case ContentType.jpeg:
         return 'image/jpeg';
       case ContentType.json:
@@ -29,6 +32,8 @@ extension ContentTypeExtension on ContentType {
         return ContentType.jpeg;
       case 'application/json':
         return ContentType.json;
+      case 'multipart/form-data':
+        return ContentType.formData;
       case 'image/png':
         return ContentType.png;
       default:

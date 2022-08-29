@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
@@ -135,22 +136,39 @@ class NetworkingClient {
     );
   }
 
+  ///
+  /// Crafts and sends a multipart/form-data request.
+  ///
+  Future<Either<RequestError, Response>> multipart({
+    required final String endpoint,
+    final Map<String, String>? form,
+    final Map<String, Uint8List>? files,
+    final Map<String, String>? headers,
+    final Map<String, String>? queryParameters,
+  }) {
+    return send(
+      request: FormDataRequest(
+        verb: HttpVerb.post,
+        uri: resolveUri(
+          baseUrl: baseUrl,
+          endpoint: endpoint,
+          queryParameters: queryParameters,
+        ),
+        files: files,
+        form: form,
+        headers: headers,
+      ),
+    );
+  }
+
   Future<Either<RequestError, Response>> send({
     required final Request request,
   }) async {
     try {
-      final httpRequest = http.Request(request.verb.value, request.uri);
-
-      httpRequest.headers
-        ..addAll(request.headers)
-        ..addAll(
-          {'Content-Type': request.contentType.value},
-        );
-
-      httpRequest.body = request.data;
+      final baseRequest = request.toBaseRequest();
 
       final httpResponse =
-          await httpClient.send(httpRequest).timeout(timeoutDuration);
+          await httpClient.send(baseRequest).timeout(timeoutDuration);
 
       final statusCode = httpResponse.statusCode;
 
