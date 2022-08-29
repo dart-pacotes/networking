@@ -1,3 +1,7 @@
+## 0.0.5
+
+- Include support for multipart requests (#1)
+
 ## 0.0.4
 
 - Include out-of-the-box JSON encoding for `Map` objects (#6)
