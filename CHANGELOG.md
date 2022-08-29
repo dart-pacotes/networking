@@ -1,3 +1,8 @@
+## 0.0.6
+
+- Fix bug where responses which content-type header had the charset concatenated (e.g., application/json;charset=UTF-8) were not getting recognized
+- Include example code in `lib` and call it from `bin`
+
 ## 0.0.5
 
 - Include support for multipart requests (#1)
