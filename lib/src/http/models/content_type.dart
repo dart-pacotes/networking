@@ -27,21 +27,18 @@ extension ContentTypeExtension on ContentType {
   }
 
   static ContentType of(final String value) {
-    switch (value) {
-      case 'image/jpeg':
-        return ContentType.jpeg;
-      case 'application/json':
-        return ContentType.json;
-      case 'multipart/form-data':
-        return ContentType.formData;
-      case 'image/png':
-        return ContentType.png;
-      default:
-        if (value.contains('text/plain')) {
-          return ContentType.plainText;
-        } else {
-          return ContentType.binary;
-        }
+    if (value.contains('image/jpeg')) {
+      return ContentType.jpeg;
+    } else if (value.contains('application/json')) {
+      return ContentType.json;
+    } else if (value.contains('multipart/form-data')) {
+      return ContentType.formData;
+    } else if (value.contains('image/png')) {
+      return ContentType.png;
+    } else if (value.contains('text/plain')) {
+      return ContentType.plainText;
+    } else {
+      return ContentType.binary;
     }
   }
 }
