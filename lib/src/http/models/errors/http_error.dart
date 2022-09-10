@@ -53,7 +53,6 @@ abstract class HttpError extends RequestError {
         _kStatusCodeByHttpErrorClass[statusCode] ?? UnknownHttpError.new;
 
     return httpErrorClass.call(
-      statusCode: statusCode,
       cause: cause,
       stackTrace: stackTrace,
     );
