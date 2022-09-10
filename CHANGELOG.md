@@ -1,3 +1,7 @@
+## 0.0.8
+
+- Fix bad usage of `HttpError` constructor tear-off
+
 ## 0.0.7
 
 - Include support of "HTTP Errors" (status code 400-599) as `RequestError`
