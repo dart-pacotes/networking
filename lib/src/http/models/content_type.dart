@@ -1,4 +1,4 @@
-// TODO: In Dart 3 we can use enum constructors, which should remove the need for these maps
+// TODO: In Dart 2.17 we can use enum constructors, which should remove the need for these maps
 
 const _kContentTypeForValue = {
   ContentType.binary: 'application/octet-stream',

@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:networking/src/http/models/errors/http_error.dart';
+
 import 'content_type.dart';
 
 ///
@@ -84,6 +86,12 @@ class ErrorResponse extends Response with Jsonable {
           headers: headers,
           fullStringify: true,
         );
+
+  HttpError get toHttpError => HttpError.fromStatusCode(
+        statusCode: statusCode,
+        cause: utf8.decode(body),
+        stackTrace: StackTrace.current,
+      );
 }
 
 ///
