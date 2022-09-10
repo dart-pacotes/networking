@@ -128,41 +128,9 @@ enum HttpVerb {
 /// Applies an extension on [HttpVerb] enum, in order to provide a
 /// way to get the HTTP verb as string.
 ///
-/// TODO: In Dart 3.0, there is the possibility to declare methods in enums,
+/// TODO: In Dart 2.17, there is the possibility to declare methods in enums,
 /// so this function should be migrated.
 ///
 extension HttpVerbExtension on HttpVerb {
   String get value => toString().split('.').last;
-}
-
-abstract class RequestError {
-  final String cause;
-
-  final StackTrace stackTrace;
-
-  const RequestError({
-    required this.cause,
-    required this.stackTrace,
-  });
-}
-
-class NoInternetConnectionError extends RequestError {
-  const NoInternetConnectionError({
-    required final String cause,
-    required final StackTrace stackTrace,
-  }) : super(cause: cause, stackTrace: stackTrace);
-}
-
-class TimeoutError extends RequestError {
-  const TimeoutError({
-    required final String cause,
-    required final StackTrace stackTrace,
-  }) : super(cause: cause, stackTrace: stackTrace);
-}
-
-class UnknownError extends RequestError {
-  const UnknownError({
-    required final String cause,
-    required final StackTrace stackTrace,
-  }) : super(cause: cause, stackTrace: stackTrace);
 }
