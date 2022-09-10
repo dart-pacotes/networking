@@ -1,3 +1,9 @@
+## 0.0.7
+
+- Include support of "HTTP Errors" (status code 400-599) as `RequestError`
+- Include more content(mime) types
+- Increase min Dart SDK version to 2.15 (to include support of constructor tear-off)
+
 ## 0.0.6
 
 - Fix bug where responses which content-type header had the charset concatenated (e.g., application/json;charset=UTF-8) were not getting recognized
