@@ -28,10 +28,13 @@ class NetworkingClient {
 
   final Duration timeoutDuration;
 
+  final List<Interceptor> interceptors;
+
   const NetworkingClient({
     required this.baseUrl,
     required this.httpClient,
     this.timeoutDuration = const Duration(minutes: 5),
+    this.interceptors = const [],
   });
 
   Future<Either<RequestError, Response>> get({
@@ -164,88 +167,111 @@ class NetworkingClient {
   Future<Either<RequestError, Response>> send({
     required final Request request,
   }) async {
+    late Either<RequestError, Response> result;
+
     try {
-      final baseRequest = request.toBaseRequest();
+      final mergeRequest = request.merge(
+        requests: [
+          ...interceptors.map(
+            (e) => e.onRequest(request),
+          ),
+        ],
+      );
+
+      final baseRequest = mergeRequest.toBaseRequest();
 
       final httpResponse =
           await httpClient.send(baseRequest).timeout(timeoutDuration);
 
-      final statusCode = httpResponse.statusCode;
+      final response = await mapHttpResponseAsResponse(httpResponse);
 
-      final contentType = ContentTypeExtension.of(
-        httpResponse.headers['content-type'] ?? '',
-      );
-
-      final body = await httpResponse.stream.toBytes();
-
-      final headers = httpResponse.headers;
-
-      if ((statusCode - 200) < 200) {
-        switch (contentType) {
-          case ContentType.jpeg:
-            return Right(
-              JpegImageResponse(
-                body: body,
-                statusCode: statusCode,
-                headers: headers,
-              ),
-            );
-          case ContentType.json:
-            return Right(
-              JsonResponse(
-                body: body,
-                statusCode: statusCode,
-                headers: headers,
-              ),
-            );
-          case ContentType.png:
-            return Right(
-              PngImageResponse(
-                body: body,
-                statusCode: statusCode,
-                headers: headers,
-              ),
-            );
-          case ContentType.plainText:
-            return Right(
-              PlainTextResponse(
-                body: body,
-                statusCode: statusCode,
-                headers: headers,
-              ),
-            );
-          default:
-            return Right(
-              BinaryResponse(
-                body: body,
-                statusCode: statusCode,
-                headers: headers,
-              ),
-            );
-        }
-      } else {
-        return Right(
-          ErrorResponse(
-            contentType: contentType,
-            body: body,
-            statusCode: statusCode,
-            headers: headers,
-          ),
-        );
+      for (final interceptor in interceptors) {
+        interceptor.onResponse(response);
       }
+
+      result = Right(response);
     } on TimeoutException catch (error, stackTrace) {
-      return Left(
+      result = Left(
         TimeoutError(cause: error.message ?? 'timeout', stackTrace: stackTrace),
       );
     } on SocketException catch (error, stackTrace) {
-      return Left(
+      result = Left(
         NoInternetConnectionError(cause: error.message, stackTrace: stackTrace),
       );
     } on Exception catch (error, stackTrace) {
-      return Left(
+      result = Left(
         UnknownError(cause: error.toString(), stackTrace: stackTrace),
       );
+    } finally {
+      result = result.leftMap(
+        (l) {
+          for (final interceptor in interceptors) {
+            interceptor.onError(l);
+          }
+
+          return l;
+        },
+      );
     }
+
+    return result;
+  }
+}
+
+@visibleForTesting
+Future<Response> mapHttpResponseAsResponse(
+  final http.StreamedResponse httpResponse,
+) async {
+  final statusCode = httpResponse.statusCode;
+
+  final contentType = ContentTypeExtension.of(
+    httpResponse.headers['content-type'] ?? '',
+  );
+
+  final body = await httpResponse.stream.toBytes();
+
+  final headers = httpResponse.headers;
+
+  if ((statusCode - 200) < 200) {
+    switch (contentType) {
+      case ContentType.jpeg:
+        return JpegImageResponse(
+          body: body,
+          statusCode: statusCode,
+          headers: headers,
+        );
+      case ContentType.json:
+        return JsonResponse(
+          body: body,
+          statusCode: statusCode,
+          headers: headers,
+        );
+      case ContentType.png:
+        return PngImageResponse(
+          body: body,
+          statusCode: statusCode,
+          headers: headers,
+        );
+      case ContentType.plainText:
+        return PlainTextResponse(
+          body: body,
+          statusCode: statusCode,
+          headers: headers,
+        );
+      default:
+        return BinaryResponse(
+          body: body,
+          statusCode: statusCode,
+          headers: headers,
+        );
+    }
+  } else {
+    return ErrorResponse(
+      contentType: contentType,
+      body: body,
+      statusCode: statusCode,
+      headers: headers,
+    );
   }
 }
 
