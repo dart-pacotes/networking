@@ -33,24 +33,29 @@ class Request {
   Request copyWith({
     Map<String, String>? headers,
   }) {
-    if (this is FormDataRequest) {
-      final request = this as FormDataRequest;
+    return Request(
+      uri: uri,
+      verb: verb,
+      contentType: contentType,
+      data: data,
+      headers: headers ?? this.headers,
+    );
+  }
 
-      return FormDataRequest(
-        uri: uri,
-        verb: verb,
-        files: request.files,
-        form: request.form,
-        headers: headers ?? this.headers,
-      );
+  Request merge({
+    required List<Request> requests,
+  }) {
+    if (requests.isEmpty) {
+      return this;
     } else {
-      return Request(
-        uri: uri,
-        verb: verb,
-        contentType: contentType,
-        data: data,
-        headers: headers ?? this.headers,
+      final headers = Map.fromEntries(
+        [
+          ...this.headers.entries,
+          for (final r in requests) ...r.headers.entries,
+        ],
       );
+
+      return copyWith(headers: headers);
     }
   }
 
@@ -92,6 +97,22 @@ class FormDataRequest extends Request {
           headers: headers,
         );
 
+  @override
+  Request copyWith({
+    Map<String, String>? headers,
+    Map<String, Uint8List>? files,
+    Map<String, String>? form,
+  }) {
+    return FormDataRequest(
+      uri: uri,
+      verb: verb,
+      files: files ?? this.files,
+      form: form ?? this.form,
+      headers: headers ?? this.headers,
+    );
+  }
+
+  @override
   http.BaseRequest toBaseRequest() {
     final httpRequest = http.MultipartRequest(verb.value, uri);
 
@@ -110,6 +131,39 @@ class FormDataRequest extends Request {
     );
 
     return httpRequest;
+  }
+
+  @override
+  Request merge({
+    required List<Request> requests,
+  }) {
+    final superMergeRequest = super.merge(requests: requests);
+
+    if (superMergeRequest == this) {
+      return this;
+    } else {
+      final files = Map.fromEntries(
+        [
+          ...this.files.entries,
+          for (final r in requests)
+            if (r is FormDataRequest) ...r.files.entries
+        ],
+      );
+
+      final form = Map.fromEntries(
+        [
+          ...this.form.entries,
+          for (final r in requests)
+            if (r is FormDataRequest) ...r.form.entries
+        ],
+      );
+
+      return copyWith(
+        files: files,
+        form: form,
+        headers: superMergeRequest.headers,
+      );
+    }
   }
 }
 
