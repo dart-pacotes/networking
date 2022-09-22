@@ -1,77 +1,15 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:http/http.dart'
-    show ByteStream, Client, StreamedResponse, BaseRequest;
+import 'package:http/http.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:networking/networking.dart';
 import 'package:test/test.dart';
 
-class MockHttpClient extends Mock implements Client {}
-
-class MockStreamedResponse extends Mock implements StreamedResponse {}
-
-class FakeBaseRequest extends Fake implements BaseRequest {}
-
-final fakeBaseUri = Uri.base;
-
-final fakeEndpointUri = Uri.base;
-
-final fakeBaseUriWithNoResource = Uri.parse('https://google.com/');
-
-ByteStream get fakeByteStream => ByteStream.fromBytes([]);
-
-final fakeStreamedResponseWithJpegContentType = StreamedResponse(
-  fakeByteStream,
-  200,
-  headers: {'content-type': ContentType.jpeg.value},
-);
-
-final fakeStreamedResponseWithJsonContentType = StreamedResponse(
-  fakeByteStream,
-  200,
-  headers: {'content-type': ContentType.json.value},
-);
-
-final fakeStreamedResponseWithPngContentType = StreamedResponse(
-  fakeByteStream,
-  200,
-  headers: {'content-type': ContentType.png.value},
-);
-
-final fakeStreamedResponseWithPlainTextContentType = StreamedResponse(
-  fakeByteStream,
-  200,
-  headers: {'content-type': ContentType.plainText.value},
-);
-
-final fakeStreamedResponseWithBinaryContentType = StreamedResponse(
-  fakeByteStream,
-  200,
-  headers: {'content-type': ContentType.binary.value},
-);
-
-final fakeStreamedResponseThatOriginatedFromBadRequest = StreamedResponse(
-  fakeByteStream,
-  400,
-  headers: {'content-type': ContentType.binary.value},
-);
-
-final fakeTimeoutException = TimeoutException('timeout');
-
-final fakeSocketException = SocketException('no internet');
-
-final fakeException = Exception('unknown');
-
-final fakeGetRequest = Request(
-  uri: fakeEndpointUri,
-  verb: HttpVerb.get,
-);
+import 'test_utils.dart';
 
 void main() {
   setUpAll(
     () {
       registerFallbackValue(FakeBaseRequest());
+      registerFallbackValue(FakeResponse());
     },
   );
 
@@ -350,6 +288,80 @@ void main() {
                   expect(
                     leftHand,
                     isA<UnknownError>(),
+                  );
+                },
+              );
+            },
+          );
+
+          group(
+            'interceptors',
+            () {
+              group(
+                'request',
+                () {
+                  test(
+                    'merges interceptor requests before sending the request',
+                    () async {
+                      final mockHttpClient = MockHttpClient();
+
+                      final mockInterceptor = MockInterceptor();
+
+                      final mockRequest = MockRequest();
+
+                      final mockResponse = MockResponse();
+
+                      final request = fakeGetRequest;
+
+                      final networkingClient = NetworkingClient(
+                        baseUrl: fakeBaseUri,
+                        httpClient: mockHttpClient,
+                        interceptors: [mockInterceptor],
+                      );
+
+                      when(
+                        () => mockInterceptor.onRequest(request),
+                      ).thenReturn(mockRequest);
+
+                      when(
+                        () => mockInterceptor.onResponse(any()),
+                      ).thenReturn(mockResponse);
+
+                      when(() => mockHttpClient.send(any()).timeout(any()))
+                          .thenAnswer(
+                        (_) => Future.value(
+                          fakeCallableStreamedResponse(),
+                        ),
+                      );
+
+                      final fakeHeaders = {
+                        'hello': 'world',
+                      };
+
+                      when(
+                        () => mockRequest.headers,
+                      ).thenReturn(fakeHeaders);
+
+                      final mergedRequest = request.merge(
+                        requests: [mockRequest],
+                      );
+
+                      final mergedBaseRequest = mergedRequest.toBaseRequest();
+
+                      await networkingClient.send(request: request);
+
+                      verify(
+                        () => mockHttpClient.send(
+                          any(
+                            that: isA<BaseRequest>().having(
+                              (br) => br.headers,
+                              'should be the same as merged base request headers',
+                              mergedBaseRequest.headers,
+                            ),
+                          ),
+                        ),
+                      ).called(1);
+                    },
                   );
                 },
               );
