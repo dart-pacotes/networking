@@ -5,6 +5,13 @@ import 'package:networking/src/http/models/errors/http_error.dart';
 
 import 'content_type.dart';
 
+const _kResponseByContentType = {
+  ContentType.jpeg: JpegImageResponse.new,
+  ContentType.png: PngImageResponse.new,
+  ContentType.plainText: PlainTextResponse.new,
+  ContentType.json: JsonResponse.new,
+};
+
 ///
 /// Defines an abstract view of an HTTP response
 ///
@@ -18,6 +25,22 @@ abstract class Response {
   final Map<String, String> headers;
 
   final bool _fullStringify;
+
+  static Response fromContentType({
+    required final ContentType contentType,
+    required final Uint8List body,
+    required final int statusCode,
+    required final Map<String, String> headers,
+  }) {
+    final responseConstructor =
+        _kResponseByContentType[contentType] ?? BinaryResponse.new;
+
+    return responseConstructor.call(
+      body: body,
+      statusCode: statusCode,
+      headers: headers,
+    );
+  }
 
   const Response({
     required this.body,
