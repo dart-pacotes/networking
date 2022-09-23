@@ -233,38 +233,12 @@ Future<Response> mapHttpResponseAsResponse(
   final headers = httpResponse.headers;
 
   if ((statusCode - 200) < 200) {
-    switch (contentType) {
-      case ContentType.jpeg:
-        return JpegImageResponse(
-          body: body,
-          statusCode: statusCode,
-          headers: headers,
-        );
-      case ContentType.json:
-        return JsonResponse(
-          body: body,
-          statusCode: statusCode,
-          headers: headers,
-        );
-      case ContentType.png:
-        return PngImageResponse(
-          body: body,
-          statusCode: statusCode,
-          headers: headers,
-        );
-      case ContentType.plainText:
-        return PlainTextResponse(
-          body: body,
-          statusCode: statusCode,
-          headers: headers,
-        );
-      default:
-        return BinaryResponse(
-          body: body,
-          statusCode: statusCode,
-          headers: headers,
-        );
-    }
+    return Response.fromContentType(
+      contentType: contentType,
+      body: body,
+      statusCode: statusCode,
+      headers: headers,
+    );
   } else {
     return ErrorResponse(
       contentType: contentType,
