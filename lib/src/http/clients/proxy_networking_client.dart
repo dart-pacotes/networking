@@ -33,8 +33,9 @@ class ProxyNetworkingClient extends NetworkingClient {
   Future<Either<RequestError, Response>> send({
     required final Request request,
   }) {
-    return proxyConfiguration.send?.call(request) ??
-        client.send(request: request);
+    final sendCallback = proxyConfiguration.onSend ?? client.send;
+
+    return sendCallback(request: request);
   }
 }
 
@@ -43,17 +44,17 @@ class ProxyConfiguration {
 
   final Client client;
 
-  final Future<Either<RequestError, Response>> Function(Request request)? send;
+  final NetworkingSendCallback? onSend;
 
   const ProxyConfiguration({
     required this.client,
     required this.uri,
-    this.send,
+    this.onSend,
   });
 
   const ProxyConfiguration.api({
-    required this.client,
-    required this.uri,
-    required this.send,
-  });
+    required Client client,
+    required Uri uri,
+    required NetworkingSendCallback onSend,
+  }) : this(client: client, uri: uri, onSend: onSend);
 }

@@ -6,6 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:networking/networking.dart';
 
+typedef NetworkingSendCallback = Future<Either<RequestError, Response>>
+    Function({required Request request});
+
 final _moreThanTwoSlashesRegex = RegExp('\/{2,}');
 
 /// Base networking client for communicating with external HTTP Web APIs.
