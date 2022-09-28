@@ -1,5 +1,5 @@
 import 'package:http/http.dart' as http;
-import 'networking_client.dart';
+import 'package:networking/networking.dart';
 
 ///
 /// A general purpose networking client to interact with GitHub Raw API
@@ -14,8 +14,9 @@ class RawGitHubNetworkingClient extends NetworkingClient {
           httpClient: http.Client(),
         );
 
-  RawGitHubNetworkingClient.withDuration({
+  RawGitHubNetworkingClient.custom({
     required final Duration duration,
+    required final List<Interceptor> interceptors,
     required final NetworkingGitHubRepository repository,
   }) : super(
           baseUrl: Uri.parse(
