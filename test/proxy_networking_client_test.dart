@@ -1,4 +1,4 @@
-import 'package:http/http.dart';
+import 'package:http/http.dart' hide Request;
 import 'package:mocktail/mocktail.dart';
 import 'package:networking/networking.dart';
 import 'package:test/test.dart';
@@ -24,6 +24,10 @@ void main() {
               test(
                 'uses proxy url and port instead of base client url and port',
                 () async {
+                  final proxyServerUri = fakeEndpointUri;
+
+                  final destinationServerUri = fakeBaseUri;
+
                   final mockHttpClient = MockHttpClient();
 
                   final networkingClient = NetworkingClient(
@@ -33,7 +37,13 @@ void main() {
 
                   final mockProxyConfiguration = MockProxyConfiguration();
 
-                  final request = fakeGetRequest;
+                  final request = Request(
+                    uri: resolveUri(
+                      baseUrl: destinationServerUri,
+                      endpoint: fakeEndpoint,
+                    ),
+                    verb: HttpVerb.get,
+                  );
 
                   when(() => mockHttpClient.send(any()).timeout(any()))
                       .thenAnswer(
@@ -43,7 +53,7 @@ void main() {
                   );
 
                   when(() => mockProxyConfiguration.uri).thenReturn(
-                    fakeEndpointUri,
+                    proxyServerUri,
                   );
 
                   when(() => mockProxyConfiguration.client).thenReturn(
@@ -76,6 +86,10 @@ void main() {
               test(
                 'calls onSend callback before triggering the request',
                 () async {
+                  final proxyServerUri = fakeEndpointUri;
+
+                  final destinationServerUri = fakeBaseUri;
+
                   final mockHttpClient = MockHttpClient();
 
                   final networkingClient = NetworkingClient(
@@ -85,7 +99,13 @@ void main() {
 
                   final mockProxyConfiguration = MockProxyConfiguration();
 
-                  final request = fakeGetRequest;
+                  final request = Request(
+                    uri: resolveUri(
+                      baseUrl: destinationServerUri,
+                      endpoint: fakeEndpoint,
+                    ),
+                    verb: HttpVerb.get,
+                  );
 
                   when(() => mockHttpClient.send(any()).timeout(any()))
                       .thenAnswer(
@@ -95,7 +115,7 @@ void main() {
                   );
 
                   when(() => mockProxyConfiguration.uri).thenReturn(
-                    fakeEndpointUri,
+                    proxyServerUri,
                   );
 
                   when(() => mockProxyConfiguration.client).thenReturn(

@@ -1,14 +1,16 @@
 import 'package:http/src/client.dart';
+import 'package:meta/meta.dart';
 import 'package:networking/networking.dart';
 
-const _kRelayDestinationServerUrlHeader = 'X-DESTINATION-URL';
+@visibleForTesting
+const kRelayDestinationServerUrlHeader = 'X-RELAY-URL';
 
 class RelayProxyNetworkingClient extends ProxyNetworkingClient {
   RelayProxyNetworkingClient({
-    required Duration duration,
-    required List<Interceptor> interceptors,
     required NetworkingClient client,
     required Uri uri,
+    final Duration duration = kDefaultTimeoutDuration,
+    final List<Interceptor> interceptors = kDefaultInterceptors,
   }) : super.custom(
           duration: duration,
           interceptors: interceptors,
@@ -31,7 +33,7 @@ class RelayProxyConfiguration extends ProxyConfiguration {
             return request.copyWith(
               headers: {
                 ...request.headers,
-                _kRelayDestinationServerUrlHeader: request.uri.toString(),
+                kRelayDestinationServerUrlHeader: request.uri.toString(),
               },
             );
           },

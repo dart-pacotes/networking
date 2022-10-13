@@ -31,6 +31,8 @@ final fakeEndpointUri = Uri.base.resolve(fakeEndpoint);
 
 final fakeBaseUriWithNoResource = Uri.parse('https://google.com/');
 
+final fakeRelayProxyServerUri = Uri.parse('https://relay.proxy');
+
 extension MapExtension<K, V> on Map<K, V> {
   bool containsEntry(MapEntry<K, V> entry) {
     return entries
