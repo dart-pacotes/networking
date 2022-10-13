@@ -17,15 +17,21 @@ class MockResponse extends Mock implements Response {}
 
 class MockInterceptor extends Mock implements Interceptor {}
 
+class MockProxyConfiguration extends Mock implements ProxyConfiguration {}
+
 class FakeBaseRequest extends Fake implements BaseRequest {}
 
 class FakeResponse extends Fake implements Response {}
 
+const fakeEndpoint = 'fake';
+
 final fakeBaseUri = Uri.base;
 
-final fakeEndpointUri = Uri.base;
+final fakeEndpointUri = Uri.base.resolve(fakeEndpoint);
 
 final fakeBaseUriWithNoResource = Uri.parse('https://google.com/');
+
+final fakeRelayProxyServerUri = Uri.parse('https://relay.proxy');
 
 extension MapExtension<K, V> on Map<K, V> {
   bool containsEntry(MapEntry<K, V> entry) {

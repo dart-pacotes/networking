@@ -8,6 +8,9 @@ import 'package:networking/networking.dart';
 
 final _moreThanTwoSlashesRegex = RegExp('\/{2,}');
 
+const kDefaultTimeoutDuration = Duration(minutes: 5);
+const kDefaultInterceptors = const <Interceptor>[];
+
 /// Base networking client for communicating with external HTTP Web APIs.
 /// Internally uses Dart [http] client library and requires one instance of it
 /// to start the client. This is done to allow mocking of networking requests.
@@ -33,8 +36,8 @@ class NetworkingClient {
   const NetworkingClient({
     required this.baseUrl,
     required this.httpClient,
-    this.timeoutDuration = const Duration(minutes: 5),
-    this.interceptors = const [],
+    this.timeoutDuration = kDefaultTimeoutDuration,
+    this.interceptors = kDefaultInterceptors,
   });
 
   Future<Either<RequestError, Response>> get({
@@ -198,7 +201,7 @@ class NetworkingClient {
       result = Left(
         NoInternetConnectionError(cause: error.message, stackTrace: stackTrace),
       );
-    } on Exception catch (error, stackTrace) {
+    } on Object catch (error, stackTrace) {
       result = Left(
         UnknownError(cause: error.toString(), stackTrace: stackTrace),
       );

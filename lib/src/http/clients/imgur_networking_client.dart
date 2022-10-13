@@ -20,8 +20,9 @@ class ImgurNetworkingClient extends NetworkingClient {
           ],
         );
 
-  ImgurNetworkingClient.withDuration({
+  ImgurNetworkingClient.custom({
     required final Duration duration,
+    required final List<Interceptor> interceptors,
     required final String apiVersion,
     required final this.clientId,
   }) : super(
@@ -30,6 +31,7 @@ class ImgurNetworkingClient extends NetworkingClient {
           timeoutDuration: duration,
           interceptors: [
             ImgurApiAuthorizationInterceptor(clientId: clientId),
+            ...interceptors,
           ],
         );
 
