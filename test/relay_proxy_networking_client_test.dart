@@ -1,7 +1,6 @@
 import 'package:http/http.dart' hide Request;
 import 'package:mocktail/mocktail.dart';
 import 'package:networking/networking.dart';
-import 'package:networking/src/http/clients/relay_proxy_networking_client.dart';
 import 'package:test/test.dart';
 
 import 'test_utils.dart';
