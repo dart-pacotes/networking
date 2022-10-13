@@ -2,6 +2,14 @@ import 'package:dartz/dartz.dart';
 import 'package:http/src/client.dart';
 import 'package:networking/networking.dart';
 
+typedef OnProxySendCallback = Request Function({
+  required Request request,
+});
+
+///
+/// A [NetworkingClient] which relays requests to a proxy web server. No initial
+/// `CONNECT` request is sent, as this proxy client acts on an API level.
+///
 class ProxyNetworkingClient extends NetworkingClient {
   final ProxyConfiguration proxyConfiguration;
 
@@ -33,9 +41,10 @@ class ProxyNetworkingClient extends NetworkingClient {
   Future<Either<RequestError, Response>> send({
     required final Request request,
   }) {
-    final sendCallback = proxyConfiguration.onSend ?? client.send;
+    final proxyRequest =
+        proxyConfiguration.onSend?.call(request: request) ?? request;
 
-    return sendCallback(request: request);
+    return client.send(request: proxyRequest);
   }
 }
 
@@ -44,7 +53,7 @@ class ProxyConfiguration {
 
   final Client client;
 
-  final NetworkingSendCallback? onSend;
+  final OnProxySendCallback? onSend;
 
   const ProxyConfiguration({
     required this.client,
@@ -55,6 +64,6 @@ class ProxyConfiguration {
   const ProxyConfiguration.api({
     required Client client,
     required Uri uri,
-    required NetworkingSendCallback onSend,
+    required OnProxySendCallback onSend,
   }) : this(client: client, uri: uri, onSend: onSend);
 }

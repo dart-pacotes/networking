@@ -6,9 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:networking/networking.dart';
 
-typedef NetworkingSendCallback = Future<Either<RequestError, Response>>
-    Function({required Request request});
-
 final _moreThanTwoSlashesRegex = RegExp('\/{2,}');
 
 /// Base networking client for communicating with external HTTP Web APIs.
@@ -201,7 +198,7 @@ class NetworkingClient {
       result = Left(
         NoInternetConnectionError(cause: error.message, stackTrace: stackTrace),
       );
-    } on Exception catch (error, stackTrace) {
+    } on Object catch (error, stackTrace) {
       result = Left(
         UnknownError(cause: error.toString(), stackTrace: stackTrace),
       );
