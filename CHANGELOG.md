@@ -1,3 +1,10 @@
+## 0.0.9
+
+- Include proxy usage as a networking client
+- Include relay proxy usage as networking client
+- Include bypass headers configuration for relay proxy configuration
+- Include web example demo
+
 ## 0.0.8
 
 - Fix bad usage of `HttpError` constructor tear-off
