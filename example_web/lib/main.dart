@@ -39,6 +39,10 @@ class _MyAppState extends State<MyApp> {
 
   var useRelayProxy = false;
 
+  var includeAlwaysIncludeBodyHeader = false;
+
+  var includeBypassExposeHeadersHeader = false;
+
   @override
   Widget build(BuildContext context) {
     final networkingBloc = context.read<NetworkingBloc>();
@@ -182,6 +186,30 @@ class _MyAppState extends State<MyApp> {
                       prefixIcon: Icon(Icons.link),
                     ),
                   ),
+                if (useRelayProxy)
+                  CheckboxListTile(
+                    title: const Text('Always Include Body'),
+                    value: includeAlwaysIncludeBodyHeader,
+                    onChanged: (value) {
+                      setState(
+                        () {
+                          includeAlwaysIncludeBodyHeader = value ?? false;
+                        },
+                      );
+                    },
+                  ),
+                if (useRelayProxy)
+                  CheckboxListTile(
+                    title: const Text('Bypass Expose Headers'),
+                    value: includeBypassExposeHeadersHeader,
+                    onChanged: (value) {
+                      setState(
+                        () {
+                          includeBypassExposeHeadersHeader = value ?? false;
+                        },
+                      );
+                    },
+                  ),
               ],
             ),
           ),
@@ -204,6 +232,9 @@ class _MyAppState extends State<MyApp> {
                 contentType: request.contentType,
                 payload: request.payload,
                 relayProxyUrl: relayProxyUrlTextEditingController.text,
+                includeAlwaysIncludeBodyHeader: includeAlwaysIncludeBodyHeader,
+                includeBypassExposeHeadersHeader:
+                    includeBypassExposeHeadersHeader,
               );
             }
 

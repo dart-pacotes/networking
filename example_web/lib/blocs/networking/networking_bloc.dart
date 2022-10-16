@@ -36,6 +36,8 @@ class NetworkingBloc extends Bloc<NetworkingEvent, NetworkingState> {
           networkingClient = RelayProxyNetworkingClient(
             client: networkingClient,
             uri: Uri.parse(event.relayProxyUrl),
+            bypassBodyDelete: event.includeAlwaysIncludeBodyHeader,
+            bypassExposeHeaders: event.includeBypassExposeHeadersHeader,
           );
         }
 
