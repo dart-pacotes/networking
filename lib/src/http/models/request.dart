@@ -31,10 +31,11 @@ class Request {
         data = data ?? '';
 
   Request copyWith({
+    Uri? uri,
     Map<String, String>? headers,
   }) {
     return Request(
-      uri: uri,
+      uri: uri ?? this.uri,
       verb: verb,
       contentType: contentType,
       data: data,
@@ -99,12 +100,13 @@ class FormDataRequest extends Request {
 
   @override
   Request copyWith({
+    Uri? uri,
     Map<String, String>? headers,
     Map<String, Uint8List>? files,
     Map<String, String>? form,
   }) {
     return FormDataRequest(
-      uri: uri,
+      uri: uri ?? this.uri,
       verb: verb,
       files: files ?? this.files,
       form: form ?? this.form,

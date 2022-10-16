@@ -31,6 +31,7 @@ class RelayProxyConfiguration extends ProxyConfiguration {
           uri: uri,
           onSend: ({required request}) {
             return request.copyWith(
+              uri: uri,
               headers: {
                 ...request.headers,
                 kRelayDestinationServerUrlHeader: request.uri.toString(),
