@@ -16,10 +16,13 @@ class NetworkingRequestSuccess extends NetworkingState {
 
   final Map<String, String> headers;
 
+  final bool isImage;
+
   NetworkingRequestSuccess({
     required this.body,
     required this.headers,
     required this.status,
+    required this.isImage,
     this.bodyDecoded,
   });
 }

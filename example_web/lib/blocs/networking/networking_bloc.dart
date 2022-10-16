@@ -51,6 +51,7 @@ class NetworkingBloc extends Bloc<NetworkingEvent, NetworkingState> {
               body: r.body,
               headers: r.headers,
               status: r.statusCode,
+              isImage: r is ImageResponse,
               bodyDecoded: (r is! BinaryResponse || r is! ImageResponse)
                   ? const Utf8Decoder().convert(r.body)
                   : null,
@@ -59,5 +60,23 @@ class NetworkingBloc extends Bloc<NetworkingEvent, NetworkingState> {
         );
       },
     );
+  }
+}
+
+extension NetworkingHttpVerbExtension on HttpVerb {
+  static HttpVerb of(final String value) {
+    switch (value) {
+      case 'post':
+        return HttpVerb.post;
+      case 'put':
+        return HttpVerb.put;
+      case 'delete':
+        return HttpVerb.delete;
+      case 'patch':
+        return HttpVerb.delete;
+      case 'get':
+      default:
+        return HttpVerb.get;
+    }
   }
 }
