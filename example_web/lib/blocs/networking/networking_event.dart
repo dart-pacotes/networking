@@ -26,12 +26,18 @@ class RequestEvent extends NetworkingEvent {
 class RelayProxyRequestEvent extends RequestEvent {
   final String relayProxyUrl;
 
+  final bool includeAlwaysIncludeBodyHeader;
+
+  final bool includeBypassExposeHeadersHeader;
+
   RelayProxyRequestEvent({
     required super.headers,
     required super.url,
     required super.verb,
-    super.payload,
     required this.relayProxyUrl,
+    required this.includeAlwaysIncludeBodyHeader,
+    required this.includeBypassExposeHeadersHeader,
+    super.payload,
     super.contentType,
   });
 }
