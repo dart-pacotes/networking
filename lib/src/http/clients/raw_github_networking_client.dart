@@ -39,8 +39,8 @@ class NetworkingGitHubRepository {
   final String branch;
 
   const NetworkingGitHubRepository({
-    required final this.branch,
-    required final this.repoId,
-    required final this.user,
+    required this.branch,
+    required this.repoId,
+    required this.user,
   });
 }

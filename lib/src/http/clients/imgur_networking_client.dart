@@ -11,7 +11,7 @@ class ImgurNetworkingClient extends NetworkingClient {
 
   ImgurNetworkingClient({
     required final String apiVersion,
-    required final this.clientId,
+    required this.clientId,
   }) : super(
           baseUrl: Uri.parse('https://api.imgur.com/$apiVersion'),
           httpClient: http.Client(),
@@ -24,7 +24,7 @@ class ImgurNetworkingClient extends NetworkingClient {
     required final Duration duration,
     required final List<Interceptor> interceptors,
     required final String apiVersion,
-    required final this.clientId,
+    required this.clientId,
   }) : super(
           baseUrl: Uri.parse('https://api.imgur.com/$apiVersion'),
           httpClient: http.Client(),
