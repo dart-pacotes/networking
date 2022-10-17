@@ -25,7 +25,8 @@ class RelayProxyNetworkingClient extends ProxyNetworkingClient {
           client: client,
           proxyConfiguration: RelayProxyConfiguration(
             client: client.httpClient,
-            uri: uri,
+            proxyUri: uri,
+            destinationUri: client.baseUrl,
             bypassBodyDelete: bypassBodyDelete,
             bypassExposeHeaders: bypassExposeHeaders,
           ),
@@ -39,15 +40,16 @@ class RelayProxyConfiguration extends ProxyConfiguration {
 
   RelayProxyConfiguration({
     required Client client,
-    required Uri uri,
+    required Uri proxyUri,
+    required Uri destinationUri,
     this.bypassBodyDelete = false,
     this.bypassExposeHeaders = false,
   }) : super.api(
           client: client,
-          uri: uri,
+          uri: destinationUri,
           onSend: ({required request}) {
             return request.copyWith(
-              uri: uri,
+              uri: proxyUri,
               headers: {
                 ...request.headers,
                 kRelayDestinationServerUrlHeader: request.uri.toString(),

@@ -90,22 +90,19 @@ void main() {
                 uri: relayProxyServerUri,
               );
 
-              final request = Request(
-                uri: resolveUri(
-                  baseUrl: destinationServerUri,
-                  endpoint: fakeEndpoint,
-                ),
-                verb: HttpVerb.get,
-              );
-
               when(() => mockHttpClient.send(any()).timeout(any())).thenAnswer(
                 (_) => Future.value(
                   fakeStreamedResponseWithJpegContentType,
                 ),
               );
 
-              await relayProxyNetworkingClient.send(
-                request: request,
+              await relayProxyNetworkingClient.get(
+                endpoint: fakeEndpoint,
+              );
+
+              final destinationEndpointUri = resolveUri(
+                baseUrl: destinationServerUri,
+                endpoint: fakeEndpoint,
               );
 
               verify(
@@ -116,7 +113,7 @@ void main() {
                       'should contain relay destination server url header mapped to server url',
                       containsPair(
                         kRelayDestinationServerUrlHeader,
-                        request.uri.toString(),
+                        destinationEndpointUri.toString(),
                       ),
                     ),
                   ),
