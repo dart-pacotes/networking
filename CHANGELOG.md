@@ -1,3 +1,7 @@
+## 0.0.10
+
+- Fix relay proxy not using destination server base url for requests
+
 ## 0.0.9
 
 - Include proxy usage as a networking client
